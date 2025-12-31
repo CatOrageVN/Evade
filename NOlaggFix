@@ -1,0 +1,32 @@
+-- Speed x2 | By MeoCam🍊 (Anti Lag)
+
+local player = game.Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+
+local speedOn = false
+local normalSpeed = 16
+local boostSpeed = 32 -- x2 (mượt hơn x3)
+
+local function setSpeed()
+	local char = player.Character
+	if not char then return end
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if hum then
+		hum.WalkSpeed = speedOn and boostSpeed or normalSpeed
+	end
+end
+
+-- Phím E bật / tắt
+UIS.InputBegan:Connect(function(input, gpe)
+	if gpe then return end
+	if input.KeyCode == Enum.KeyCode.E then
+		speedOn = not speedOn
+		setSpeed()
+	end
+end)
+
+-- Giữ speed khi chết
+player.CharacterAdded:Connect(function()
+	task.wait(0.3)
+	setSpeed()
+end)
