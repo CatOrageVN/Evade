@@ -1,68 +1,25 @@
--- Speed x3 | By MeoCam🍊
+-- Speed x3 | By MeoCam🍊 (ANTI LAG)
 
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-
+local player = game.Players.LocalPlayer
 local speedOn = false
-local normalSpeed = 16
-local boostSpeed = 16 * 3 -- x3 tốc độ
+local normal = 16
+local boost = 48 -- x3
 
--- GUI
-local gui = Instance.new("ScreenGui")
-gui.Name = "SpeedGUI"
-gui.Parent = player:WaitForChild("PlayerGui")
-
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 240, 0, 140)
-frame.Position = UDim2.new(0.5, -120, 0.5, -70)
-frame.BackgroundColor3 = Color3.fromRGB(255, 140, 0) -- CAM
-frame.Active = true
-frame.Draggable = true
-frame.Parent = gui
-
-local inside = Instance.new("Frame")
-inside.Size = UDim2.new(1, -10, 1, -10)
-inside.Position = UDim2.new(0, 5, 0, 5)
-inside.BackgroundColor3 = Color3.fromRGB(255, 230, 120) -- VÀNG
-inside.Parent = frame
-
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 35)
-title.BackgroundTransparency = 1
-title.Text = "Speed x3 - By MeoCam🍊"
-title.TextScaled = true
-title.Font = Enum.Font.GothamBold
-title.TextColor3 = Color3.fromRGB(0,0,0)
-title.Parent = inside
-
-local btn = Instance.new("TextButton")
-btn.Size = UDim2.new(0.7, 0, 0, 40)
-btn.Position = UDim2.new(0.15, 0, 0.55, 0)
-btn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-btn.Text = "OFF"
-btn.TextScaled = true
-btn.Font = Enum.Font.GothamBold
-btn.TextColor3 = Color3.fromRGB(255,255,255)
-btn.Parent = inside
-
--- Function
-local function setSpeed(state)
-	speedOn = state
-	btn.Text = state and "ON" or "OFF"
-	btn.BackgroundColor3 = state 
-		and Color3.fromRGB(0, 200, 0)
-		or Color3.fromRGB(200, 0, 0)
-
+local function getHumanoid()
 	local char = player.Character or player.CharacterAdded:Wait()
-	local hum = char:WaitForChild("Humanoid")
-	hum.WalkSpeed = state and boostSpeed or normalSpeed
+	return char:WaitForChild("Humanoid")
 end
 
-btn.MouseButton1Click:Connect(function()
-	setSpeed(not speedOn)
+-- Nhấn E bật/tắt
+game:GetService("UserInputService").InputBegan:Connect(function(i, gpe)
+	if gpe then return end
+	if i.KeyCode == Enum.KeyCode.E then
+		speedOn = not speedOn
+		getHumanoid().WalkSpeed = speedOn and boost or normal
+	end
 end)
 
--- Giữ tốc độ khi chết
+-- Giữ speed khi chết (1 lần, không loop)
 player.CharacterAdded:Connect(function(char)
-	char:WaitForChild("Humanoid").WalkSpeed = speedOn and boostSpeed or normalSpeed
+	char:WaitForChild("Humanoid").WalkSpeed = speedOn and boost or normal
 end)
