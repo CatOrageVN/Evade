@@ -1,0 +1,40 @@
+-- Velocity Speed | By MeoCam🍊
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local speedOn = false
+local speedPower = 35 -- chỉnh số này (20–40 là mượt)
+
+local function getRoot()
+	local char = player.Character
+	if char then
+		return char:FindFirstChild("HumanoidRootPart")
+	end
+end
+
+-- Bấm E bật / tắt
+UIS.InputBegan:Connect(function(input, gpe)
+	if gpe then return end
+	if input.KeyCode == Enum.KeyCode.E then
+		speedOn = not speedOn
+	end
+end)
+
+-- Đẩy lực theo hướng di chuyển
+RunService.RenderStepped:Connect(function()
+	if not speedOn then return end
+
+	local root = getRoot()
+	local cam = workspace.CurrentCamera
+	if root and cam then
+		local moveDir = player:GetMouse().Hit.LookVector
+		root.Velocity = Vector3.new(
+			moveDir.X * speedPower,
+			root.Velocity.Y,
+			moveDir.Z * speedPower
+		)
+	end
+end)
