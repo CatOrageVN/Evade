@@ -1,0 +1,95 @@
+-- 🐱🍊 MeoCam Hub | X2 Speed + No Lag
+-- Local Script / Executor
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+
+-- ==== GUI ====
+local gui = Instance.new("ScreenGui", Player.PlayerGui)
+gui.Name = "MeoCamHub"
+
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.new(0, 260, 0, 200)
+main.Position = UDim2.new(0.05, 0, 0.3, 0)
+main.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+
+local corner = Instance.new("UICorner", main)
+corner.CornerRadius = UDim.new(0, 20)
+
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Text = "🐱 MeoCam Hub 🍊"
+title.BackgroundTransparency = 1
+title.TextScaled = true
+title.Font = Enum.Font.GothamBold
+title.TextColor3 = Color3.fromRGB(255,255,255)
+
+-- ==== BUTTON FUNCTION ====
+local function makeButton(text, posY)
+    local btn = Instance.new("TextButton", main)
+    btn.Size = UDim2.new(0.8, 0, 0, 35)
+    btn.Position = UDim2.new(0.1, 0, posY, 0)
+    btn.Text = text
+    btn.Font = Enum.Font.GothamBold
+    btn.TextScaled = true
+    btn.BackgroundColor3 = Color3.fromRGB(255, 200, 120)
+    btn.TextColor3 = Color3.fromRGB(40,40,40)
+
+    local c = Instance.new("UICorner", btn)
+    c.CornerRadius = UDim.new(0, 12)
+    return btn
+end
+
+-- ==== SPEED ====
+local speedOn = false
+local speedBtn = makeButton("⚡ X2 Speed: OFF", 0.3)
+
+speedBtn.MouseButton1Click:Connect(function()
+    local char = Player.Character or Player.CharacterAdded:Wait()
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
+
+    speedOn = not speedOn
+    if speedOn then
+        hum.WalkSpeed = 32
+        hum.JumpPower = 80
+        speedBtn.Text = "⚡ X2 Speed: ON"
+    else
+        hum.WalkSpeed = 16
+        hum.JumpPower = 50
+        speedBtn.Text = "⚡ X2 Speed: OFF"
+    end
+end)
+
+-- ==== NO LAG ====
+local lagBtn = makeButton("🚀 No Lag (FPS Boost)", 0.55)
+
+lagBtn.MouseButton1Click:Connect(function()
+    for _,v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Material = Enum.Material.Plastic
+            v.Reflectance = 0
+        elseif v:IsA("Decal") or v:IsA("Texture") then
+            v:Destroy()
+        elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+            v.Enabled = false
+        end
+    end
+
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    lagBtn.Text = "✅ No Lag Enabled"
+end)
+
+-- ==== INFO ====
+local info = Instance.new("TextLabel", main)
+info.Size = UDim2.new(1, 0, 0, 30)
+info.Position = UDim2.new(0, 0, 0.82, 0)
+info.Text = "MeoCam 🍊 | Smooth & Fast"
+info.BackgroundTransparency = 1
+info.TextColor3 = Color3.fromRGB(255,255,255)
+info.Font = Enum.Font.Gotham
+info.TextScaled = true
