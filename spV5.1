@@ -1,0 +1,79 @@
+-- 🐱🍊 MeoCam Evade v5.1 | Toggle Auto Dash
+-- E = Toggle Dash | Z = NoLag
+-- Made for EVADE
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local plr = Players.LocalPlayer
+
+local dashOn = false
+local DASH_DISTANCE = 5.5   -- 4.5–6 an toàn
+local DASH_DELAY = 0.18     -- đừng thấp hơn 0.14
+
+-- GUI
+local gui = Instance.new("ScreenGui", plr.PlayerGui)
+gui.Name = "MeoCamEvadeV3"
+
+local f = Instance.new("Frame", gui)
+f.Size = UDim2.new(0,280,0,110)
+f.Position = UDim2.new(0.05,0,0.35,0)
+f.BackgroundColor3 = Color3.fromRGB(255,165,0)
+f.Active = true
+f.Draggable = true
+f.BorderSizePixel = 0
+Instance.new("UICorner", f).CornerRadius = UDim.new(0,18)
+
+local t = Instance.new("TextLabel", f)
+t.Size = UDim2.new(1,0,1,0)
+t.BackgroundTransparency = 1
+t.Font = Enum.Font.GothamBold
+t.TextScaled = true
+t.TextColor3 = Color3.fromRGB(40,40,40)
+t.Text = "🐱 MeoCam Evade 🍊\n[E] Auto Dash : OFF\n[Z] NoLag"
+
+-- NoLag
+local function noLag()
+    for _,v in pairs(workspace:GetDescendants()) do
+        if v:IsA("ParticleEmitter") or v:IsA("Trail") then
+            v.Enabled = false
+        elseif v:IsA("Decal") or v:IsA("Texture") then
+            v:Destroy()
+        elseif v:IsA("BasePart") then
+            v.Material = Enum.Material.Plastic
+        end
+    end
+end
+
+-- Toggle key
+UIS.InputBegan:Connect(function(input, gp)
+    if gp then return end
+
+    if input.KeyCode == Enum.KeyCode.E then
+        dashOn = not dashOn
+        t.Text =
+            "🐱 MeoCam Evade 🍊\n[E] Auto Dash : "..(dashOn and "ON" or "OFF")..
+            "\n[Z] NoLag"
+    elseif input.KeyCode == Enum.KeyCode.Z then
+        noLag()
+    end
+end)
+
+-- Auto Dash Loop
+task.spawn(function()
+    while true do
+        if dashOn then
+            local char = plr.Character
+            if char then
+                local hrp = char:FindFirstChild("HumanoidRootPart")
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hrp and hum then
+                    local dir = hum.MoveDirection
+                    if dir.Magnitude > 0 then
+                        hrp.CFrame = hrp.CFrame + (dir * DASH_DISTANCE)
+                    end
+                end
+            end
+        end
+        task.wait(DASH_DELAY)
+    end
+end)
