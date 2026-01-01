@@ -1,0 +1,99 @@
+-- 🐱🍊 MeoCam Hub v4 | Keybind Edition
+-- E = X3 Speed | Z = No Lag
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+
+local plr = Players.LocalPlayer
+
+-- ==== CONFIG ====
+local SPEED_VALUE = 54 -- X3 speed
+local speedOn = false
+local nolagOn = false
+
+-- ==== GUI ====
+local gui = Instance.new("ScreenGui", plr.PlayerGui)
+gui.Name = "MeoCamHubV2"
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 280, 0, 130)
+frame.Position = UDim2.new(0.05, 0, 0.35, 0)
+frame.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+frame.Active = true
+frame.Draggable = true
+frame.BorderSizePixel = 0
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 20)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1,0,0,35)
+title.BackgroundTransparency = 1
+title.Text = "🐱 MeoCam Hub 🍊"
+title.Font = Enum.Font.GothamBold
+title.TextScaled = true
+title.TextColor3 = Color3.fromRGB(255,255,255)
+
+local status = Instance.new("TextLabel", frame)
+status.Size = UDim2.new(1,0,0,60)
+status.Position = UDim2.new(0,0,0.35,0)
+status.BackgroundTransparency = 1
+status.Text = "E : X3 Speed [OFF]\nZ : No Lag [OFF]"
+status.Font = Enum.Font.GothamBold
+status.TextScaled = true
+status.TextColor3 = Color3.fromRGB(40,40,40)
+
+-- ==== SPEED LOCK ====
+RunService.Heartbeat:Connect(function()
+    if speedOn then
+        local char = plr.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum and hum.WalkSpeed ~= SPEED_VALUE then
+                hum.WalkSpeed = SPEED_VALUE
+            end
+        end
+    end
+end)
+
+-- ==== NO LAG FUNCTION ====
+local function enableNoLag()
+    for _,v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Material = Enum.Material.Plastic
+            v.Reflectance = 0
+        elseif v:IsA("Decal") or v:IsA("Texture") then
+            v:Destroy()
+        elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+            v.Enabled = false
+        end
+    end
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+end
+
+-- ==== KEYBINDS ====
+UIS.InputBegan:Connect(function(input, gp)
+    if gp then return end
+
+    -- E = X3 SPEED
+    if input.KeyCode == Enum.KeyCode.E then
+        speedOn = not speedOn
+        status.Text = "E : X3 Speed ["..(speedOn and "ON" or "OFF").."]\nZ : No Lag ["..(nolagOn and "ON" or "OFF").."]"
+
+        if not speedOn then
+            local char = plr.Character
+            if char then
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum then hum.WalkSpeed = 16 end
+            end
+        end
+    end
+
+    -- Z = NO LAG
+    if input.KeyCode == Enum.KeyCode.Z then
+        nolagOn = not nolagOn
+        if nolagOn then
+            enableNoLag()
+        end
+        status.Text = "E : X3 Speed ["..(speedOn and "ON" or "OFF").."]\nZ : No Lag ["..(nolagOn and "ON" or "OFF").."]"
+    end
+end)
